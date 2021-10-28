@@ -22,10 +22,12 @@ class MyApp extends StatelessWidget {
 }
 
 class ListSearch extends StatefulWidget {
+
   ListSearchState createState() => ListSearchState();
 }
 
 class ListSearchState extends State<ListSearch> {
+
   String _data = '';
   List<String> result = [];
   List<Item> Items = [];
@@ -33,6 +35,7 @@ class ListSearchState extends State<ListSearch> {
 
   @override
   void initState() {
+
     _loadData().then((value){
       print('Async done');
     });
@@ -42,7 +45,6 @@ class ListSearchState extends State<ListSearch> {
   // This function is triggered when the user presses the floating button
   Future<void> _loadData() async {
     final _loadedData = await rootBundle.loadString('assets/items.txt');
-    log("dasdsa");
     _data = _loadedData;
     result = _data.split("\r\n");
     for (var i = 0; i < result.length; i++) {
@@ -107,7 +109,9 @@ class ListSearchState extends State<ListSearch> {
               children: newDataList.map((data) {
                 return ListTile(
                   title: Text(data),
-                  onTap: ()=> showDetails(data),);
+                  onTap: () { Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return new detailedView(data: data, items: Items);
+                  }));},);
               }).toList(),
             ),
           )
@@ -160,3 +164,60 @@ class _SearchAppBarState extends State<SearchAppBar> {
     );
   }
 }
+
+class detailedView extends StatelessWidget {
+final data;
+final items;
+detailedView({Key? key,this.data,this.items}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+        appBar: AppBar(
+        title: Text('Inventory Tracking System')
+    ),
+
+        body: new Center(
+
+
+        child: Column (
+        children: <Widget>[
+
+          Container(
+
+              alignment: Alignment.center,
+
+              child:
+
+              Text("${data} Details",  style: TextStyle(fontSize: 25, color: Colors.white)),
+              margin: const EdgeInsets.only(top: 60.0),
+              height: 80,
+              width: 300,
+              color: Colors.blue
+
+          )          ,
+        Container(
+          alignment: Alignment.center,
+
+        child:
+        Text(items.where(( i ) => i.name == data).toString().replaceAll('(','').replaceAll(')',''),  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+          height: 200,
+            width: 350
+    )          ,
+          Container(
+              alignment: Alignment.center,
+            child: FlatButton(
+              child: Text('Back'),
+                color: Colors.blue,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          )
+     ]
+    )
+    )));
+  }
+}
+
