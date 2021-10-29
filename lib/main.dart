@@ -42,7 +42,6 @@ class ListSearchState extends State<ListSearch> {
     super.initState();
   }
 
-  // This function is triggered when the user presses the floating button
   Future<void> _loadData() async {
     final _loadedData = await rootBundle.loadString('assets/items.txt');
     _data = _loadedData;
@@ -220,4 +219,3 @@ detailedView({Key? key,this.data,this.items}) : super(key: key);
     )));
   }
 }
-
