@@ -1,5 +1,7 @@
-2021/10/28-22:05:41.048 2fac Recovering log #5
-2021/10/28-22:05:41.092 2fac Delete type=0 #3
-2021/10/28-22:05:41.092 2fac Delete type=0 #5
-2021/10/28-22:05:41.092 2fac Delete type=3 #2
-2021/10/28-22:05:41.092 2fac Delete type=3 #4
+2021/10/29-11:35:15.584 fdc Recovering log #7
+2021/10/29-11:35:15.649 fdc Delete type=0 #3
+2021/10/29-11:35:15.649 fdc Delete type=0 #5
+2021/10/29-11:35:15.649 fdc Delete type=0 #7
+2021/10/29-11:35:15.649 fdc Delete type=3 #2
+2021/10/29-11:35:15.649 fdc Delete type=3 #4
+2021/10/29-11:35:15.649 fdc Delete type=3 #6

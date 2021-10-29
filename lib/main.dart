@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
 }
 
 class ListSearch extends StatefulWidget {
-  @override
   ListSearchState createState() => ListSearchState();
 }
 
@@ -26,8 +25,6 @@ class ListSearchState extends State<ListSearch> {
   List<Item> Items = [];
   static List<String> mainDataList = [];
 
-  final _itemID = TextEditingController();
-
   @override
   void initState() {
     _loadData().then((value) {
@@ -36,10 +33,8 @@ class ListSearchState extends State<ListSearch> {
     super.initState();
   }
 
-  // This function is triggered when the user presses the floating button
   Future<void> _loadData() async {
     final _loadedData = await rootBundle.loadString('assets/items.txt');
-    log("dasdsa");
     _data = _loadedData;
     result = _data.split("\r\n");
     for (var i = 0; i < result.length; i++) {
@@ -54,10 +49,6 @@ class ListSearchState extends State<ListSearch> {
       mainDataList.add(item.name.toString());
     }
   }
-
-  // Future<void> _addData() async {
-  //   Items.add(itemCreated);
-  // }
 
   TextEditingController _textController = TextEditingController();
 
@@ -98,12 +89,19 @@ class ListSearchState extends State<ListSearch> {
           Expanded(
             child: ListView(
               padding: EdgeInsets.all(12.0),
-              children: newDataList.map((data) {
-                return ListTile(
-                  title: Text(data),
-                  onTap: () => showDetails(data),
-                );
-              }).toList(),
+              children: newDataList.map(
+                (data) {
+                  return ListTile(
+                    title: Text(data),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return new detailedView(data: data, items: Items);
+                      }));
+                    },
+                  );
+                },
+              ).toList(),
             ),
           ),
           Container(
@@ -165,6 +163,52 @@ class _SearchAppBarState extends State<SearchAppBar> {
         ),
       ]),
     );
+  }
+}
+
+class detailedView extends StatelessWidget {
+  final data;
+  final items;
+  detailedView({Key? key, this.data, this.items}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+            appBar: AppBar(title: Text('Inventory Tracking System')),
+            body: new Center(
+                child: Column(children: <Widget>[
+              Container(
+                  alignment: Alignment.center,
+                  child: Text("${data} Details",
+                      style: TextStyle(fontSize: 25, color: Colors.white)),
+                  margin: const EdgeInsets.only(top: 60.0),
+                  height: 80,
+                  width: 300,
+                  color: Colors.blue),
+              Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                      items
+                          .where((i) => i.name == data)
+                          .toString()
+                          .replaceAll('(', '')
+                          .replaceAll(')', ''),
+                      style:
+                          TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+                  height: 200,
+                  width: 350),
+              Container(
+                alignment: Alignment.center,
+                child: FlatButton(
+                  child: Text('Back'),
+                  color: Colors.blue,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ]))));
   }
 }
 
