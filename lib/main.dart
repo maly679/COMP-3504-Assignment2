@@ -114,7 +114,9 @@ class ListSearchState extends State<ListSearch> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AddItemPage()),
+                  MaterialPageRoute(builder: (context) {
+                    return new AddItemPage(data: _data, items: Items);
+                  }),
                 );
               },
             ),
@@ -213,7 +215,26 @@ class detailedView extends StatelessWidget {
 }
 
 class AddItemPage extends StatelessWidget {
-  const AddItemPage({Key? key}) : super(key: key);
+  final data;
+  final items;
+  const AddItemPage({Key? key, this.data, this.items}) : super(key: key);
+
+  // Future<void> _loadData() async {
+  //   final _loadedData = await rootBundle.loadString('assets/items.txt');
+  //   _data = _loadedData;
+  //   result = _data.split("\r\n");
+  //   for (var i = 0; i < result.length; i++) {
+  //     var splitResult = result[i].split(';');
+  //     var item = new Item(
+  //         int.parse(splitResult[0]),
+  //         splitResult[1],
+  //         int.parse(splitResult[2]),
+  //         double.parse(splitResult[3]),
+  //         int.parse(splitResult[4]));
+  //     Items.add(item);
+  //     mainDataList.add(item.name.toString());
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -289,16 +310,16 @@ class AddItemPage extends StatelessWidget {
                       int.parse(_itemQuantity.text),
                       double.parse(_itemPrice.text),
                       int.parse(_supplierID.text));
-
                   // Items.add(item);
-                  Navigator.push(
+
+                  // todo: export item to text file
+
+                  // Return to main menu
+                  Navigator.pop(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ListSearch(),
                       ));
-
-                  // Return to main menu
-                  // Navigator.pop(context);
                 },
                 color: Color(0xffFF1744),
                 textColor: Colors.white,
