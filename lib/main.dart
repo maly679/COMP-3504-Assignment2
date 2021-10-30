@@ -225,27 +225,6 @@ class AddItem extends StatefulWidget {
 }
 
 class AddItemState extends State<AddItem> {
-  // final data;
-  // final items;
-  // const AddItemPage({Key? key, this.data, this.items}) : super(key: key);
-
-  // Future<void> _loadData() async {
-  //   final _loadedData = await rootBundle.loadString('assets/items.txt');
-  //   _data = _loadedData;
-  //   result = _data.split("\r\n");
-  //   for (var i = 0; i < result.length; i++) {
-  //     var splitResult = result[i].split(';');
-  //     var item = new Item(
-  //         int.parse(splitResult[0]),
-  //         splitResult[1],
-  //         int.parse(splitResult[2]),
-  //         double.parse(splitResult[3]),
-  //         int.parse(splitResult[4]));
-  //     Items.add(item);
-  //     mainDataList.add(item.name.toString());
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final _itemID = TextEditingController();
@@ -303,16 +282,6 @@ class AddItemState extends State<AddItem> {
                 )),
             RaisedButton(
                 onPressed: () {
-                  // print(_itemID.text +
-                  //     " " +
-                  //     _itemName.text +
-                  //     " " +
-                  //     _itemQuantity.text +
-                  //     " " +
-                  //     _itemPrice.text +
-                  //     " " +
-                  //     _supplierID.text);
-
                   // todo: add item to array
                   var item = new Item(
                       int.parse(_itemID.text),
@@ -320,11 +289,11 @@ class AddItemState extends State<AddItem> {
                       int.parse(_itemQuantity.text),
                       double.parse(_itemPrice.text),
                       int.parse(_supplierID.text));
-                  // widget.items.add(item);
+
                   print(item);
-                  // print("Before adding item: " + widget.items);
+
                   widget.items.add(item);
-                  // print("After adding item: " + widget.items);
+
                   print(widget.items);
 
                   // todo: update items array in document
@@ -332,7 +301,7 @@ class AddItemState extends State<AddItem> {
                   // todo: export item to text file
 
                   // Return to main menu
-                  Navigator.pop(
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ListSearch(),
