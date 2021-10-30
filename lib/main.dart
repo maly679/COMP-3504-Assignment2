@@ -115,7 +115,8 @@ class ListSearchState extends State<ListSearch> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return new AddItemPage(data: _data, items: Items);
+                    // return new AddItemPage(data: _data, items: Items);
+                    return new AddItem(data: _data, items: Items);
                   }),
                 );
               },
@@ -214,10 +215,19 @@ class detailedView extends StatelessWidget {
   }
 }
 
-class AddItemPage extends StatelessWidget {
+class AddItem extends StatefulWidget {
   final data;
   final items;
-  const AddItemPage({Key? key, this.data, this.items}) : super(key: key);
+  AddItem({Key? key, this.data, this.items}) : super(key: key);
+
+  @override
+  AddItemState createState() => AddItemState();
+}
+
+class AddItemState extends State<AddItem> {
+  // final data;
+  // final items;
+  // const AddItemPage({Key? key, this.data, this.items}) : super(key: key);
 
   // Future<void> _loadData() async {
   //   final _loadedData = await rootBundle.loadString('assets/items.txt');
@@ -293,15 +303,15 @@ class AddItemPage extends StatelessWidget {
                 )),
             RaisedButton(
                 onPressed: () {
-                  print(_itemID.text +
-                      " " +
-                      _itemName.text +
-                      " " +
-                      _itemQuantity.text +
-                      " " +
-                      _itemPrice.text +
-                      " " +
-                      _supplierID.text);
+                  // print(_itemID.text +
+                  //     " " +
+                  //     _itemName.text +
+                  //     " " +
+                  //     _itemQuantity.text +
+                  //     " " +
+                  //     _itemPrice.text +
+                  //     " " +
+                  //     _supplierID.text);
 
                   // todo: add item to array
                   var item = new Item(
@@ -310,7 +320,14 @@ class AddItemPage extends StatelessWidget {
                       int.parse(_itemQuantity.text),
                       double.parse(_itemPrice.text),
                       int.parse(_supplierID.text));
-                  // Items.add(item);
+                  // widget.items.add(item);
+                  print(item);
+                  // print("Before adding item: " + widget.items);
+                  widget.items.add(item);
+                  // print("After adding item: " + widget.items);
+                  print(widget.items);
+
+                  // todo: update items array in document
 
                   // todo: export item to text file
 
