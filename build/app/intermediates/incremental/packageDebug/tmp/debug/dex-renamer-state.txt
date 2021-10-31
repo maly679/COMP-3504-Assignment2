@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #Mon Oct 25 21:24:11 MDT 2021
+=======
+#Thu Oct 28 14:48:08 MDT 2021
+>>>>>>> develop
 base.0=C\:\\Users\\moham\\StudioProjects\\comp_3504_assignment2\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 renamed.0=classes.dex
 path.0=classes.dex
