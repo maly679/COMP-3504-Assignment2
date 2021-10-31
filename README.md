@@ -1,16 +1,24 @@
-# comp_3504_assignment2
+# Inventory Tracking System
 
-A new Flutter project.
+This application is designed to view all the items currently in inventory and add an item missing from inventory.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To start the application, type a character into the search field and then delete it. 
+This will enable the app to properly load and display all the current items currently in inventory. 
 
-A few resources to get you started if this is your first Flutter project:
+### Viewing the metadata of an item
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- To view the metadata of a particular item, click on the item. 
+- The app will take you to a new window, displaying the item\'s ID, name, quantity, price, and supplier\'s ID.
+- To return to the main page, click on the back arrow.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Adding an item to inventory
+- To add an new item to inventory, click on the button on the bottom of the screen \"Add Item to Inventory\".
+- This will take you to a new window where you can add the item and input its ID, name, quantity, price, and supplier\'s ID.
+- Once you are satisified with the edit, click \"Add Item\".
+- If you change your mind and want to return to the main page, click on \"Return to Main Page\" or the back button.
+
+
+## Notable Bugs
+There is a bug in the app\'s main page where the list of items is not rendered initially. To get the list of items to show on the page, first, type a character into the search field, then erase said character to render all the items in inventory.
