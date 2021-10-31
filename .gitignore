@@ -1,0 +1,11 @@
+# Don't track content of these folders
+.dart_tool/
+lib/
+
+# Database Log Files #
+*LOCK*
+*LOG*
+*chrome-device*
+
+# Unnecessary Dart Files #
+global.dart
