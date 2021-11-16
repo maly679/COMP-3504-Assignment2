@@ -27,7 +27,6 @@ class ListSearchState extends State<ListSearch> {
   List<String> result = [];
   List<Item> Items = [];
   static List<String> mainDataList = [];
-  static List<String> newerDataList = [];
   Widget _body = CircularProgressIndicator();
 
   //tests whether data is still fetching. Initially set to true;
@@ -69,7 +68,8 @@ class ListSearchState extends State<ListSearch> {
   // Copy Main List into New List. This is used to process the search functionality.
   List<String> newDataList = List.from(mainDataList);
 
-  //Item changed in search
+  //Item changed in search. Tests id and name through the mainDataList items that have data stored
+  //as 'name;ID', and if match is found returns newDataList in the name-only format required in list view.
   onItemChanged(String value) {
     setState(() {
       newDataList = mainDataList
@@ -78,7 +78,7 @@ class ListSearchState extends State<ListSearch> {
           .toList();
 
       //used to account for search by id and name. Data is displayed on screen
-      //by just name, however the id is stored in the mainDataList, for actual processing.
+      //by just name.
       int i = 0;
       newDataList.forEach((element) {
           newDataList[i] = element.split(';')[0];
@@ -136,18 +136,18 @@ class ListSearchState extends State<ListSearch> {
                   'Add Item to Inventory',
                   style: TextStyle(fontSize: 20.0),
                 ),
-                //Process the adding of items on press of button
+                //Process the adding of items on press of button.
                 onPressed: () async {
-                  // Navigator.push returns a future value so you need to await for it
+                  //Navigator.push returns a future value so you need to await for it.
                   var updatedData = await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
                             AddItem(data: _data, items: Items)),
                   );
-                  //returned items, after addition, requiring state change of processed data to reflect addition.
+                  //Returned items, after addition, requiring state change of processed data to reflect addition.
                   setState(() {
-                    //If a new item was added, need to re-initialize the lists used for search functionality
+                    //If a new item was added, need to re-initialize the lists used for search functionality.
                     //and display of data.
                     if (updatedData.length > 0) {
                       mainDataList = [];
@@ -209,7 +209,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 }
 
-//upon clicking an item - shows detailed view.
+//Upon clicking an item - shows detailed view.
 class detailedView extends StatelessWidget {
   final data;
   final items;
@@ -333,7 +333,7 @@ class AddItemState extends State<AddItem> {
                       double.parse(_itemPrice.text),
                       int.parse(_supplierID.text));
                   widget.items.add(item);
-                  //return to the list search page with the newly added item (widget.items list)
+                  //Return to the list search page with the newly added item (widget.items list)
                   Navigator.pop(
                       context,
                       widget.items);
@@ -344,10 +344,10 @@ class AddItemState extends State<AddItem> {
                 child: const Text('Add Item to Inventory')),
             ElevatedButton(
               onPressed: () {
-
                 Navigator.pop(
                     context,
-                    widget.items);              },
+                    widget.items);              
+              },
               child: const Text('Return to Main Menu'),
             )
           ],
