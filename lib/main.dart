@@ -18,8 +18,6 @@ class MyApp extends StatelessWidget {
 //class for handling item display and searches
 class ListSearch extends StatefulWidget {
   ListSearchState createState() => ListSearchState();
-// final itemsAdded;
-// ListSearch({Key? key, this.itemsAdded}) : super(key: key);
 }
 
 class ListSearchState extends State<ListSearch> {
@@ -29,10 +27,14 @@ class ListSearchState extends State<ListSearch> {
   List<String> result = [];
   List<Item> Items = [];
   static List<String> mainDataList = [];
+  static List<String> newerDataList = [];
+  Widget _body = CircularProgressIndicator();
+
+  //tests whether data is still fetching. Initially set to true;
+  bool loading = true;
 
   @override
   void initState() {
-
     _loadData().then((value) {
       print('Async done');
     });
@@ -42,6 +44,7 @@ class ListSearchState extends State<ListSearch> {
   //Load data from file, if this is first run of program.
   Future<void> _loadData() async {
     if (mainDataList.length == 0) {
+
       final _loadedData = await rootBundle.loadString('assets/items.txt');
       _data = _loadedData;
       result = _data.split("\r\n");
@@ -54,106 +57,117 @@ class ListSearchState extends State<ListSearch> {
             double.parse(splitResult[3]),
             int.parse(splitResult[4]));
         Items.add(item);
-        mainDataList.add(item.name.toString());
+        mainDataList.add('${item.name.toString()};${item.id.toString()}');
+
       }
+      //once data is loaded, set loading to false and initialize data, so inventory data can be shown on widget.
+      setState((){ loading = false; onItemChanged('');});
     }
   }
 
   TextEditingController _textController = TextEditingController();
-
   // Copy Main List into New List. This is used to process the search functionality.
   List<String> newDataList = List.from(mainDataList);
 
   //Item changed in search
   onItemChanged(String value) {
-
     setState(() {
       newDataList = mainDataList
-          .where((string) => string.toLowerCase().contains(value.toLowerCase()))
+          .where((string) =>
+          string.toLowerCase().contains(value.toLowerCase()))
           .toList();
-    });
-  }
 
-  //showDetails - for troubleshooting/not used - can be removed after).
-  showDetails(String Name) {
-    for (int i = 0; i < Items.length; i++) {
-      if (Items[i].name == Name) {
-        print(Items[i]);
-      }
-    }
+      //used to account for search by id and name. Data is displayed on screen
+      //by just name, however the id is stored in the mainDataList, for actual processing.
+      int i = 0;
+      newDataList.forEach((element) {
+          newDataList[i] = element.split(';')[0];
+          i++;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    //Checks if async data is still loading; if so show circular loading screen
+    //loading is set to false in state above.
 
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: TextField(
-              controller: _textController,
-              decoration: InputDecoration(
-                hintText: 'Search Here...',
+    if (loading == true) {
+      return CircularProgressIndicator();
+    } else {
+
+      return Scaffold(
+        body: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: TextField(
+                controller: _textController,
+                decoration: InputDecoration(
+                  hintText: 'Search Here...',
+                ),
+                onChanged: onItemChanged,
               ),
-              onChanged: onItemChanged,
             ),
-          ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(12.0),
-              children:
-              newDataList.map(
-                    (data) {
-                  return ListTile(
-                    title: Text(data),
-                    //process detail view
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                            return new detailedView(data: data, items: Items);
-                          }));
-                    },
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.all(12.0),
+                children:
+                newDataList.map(
+                      (data) {
+                    return ListTile(
+                      title: Text(data),
+                      //process detail view on click of item name.
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                              return new detailedView(data: data, items: Items);
+                            }));
+                      },
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(25),
+              child: FlatButton(
+                child: Text(
+                  'Add Item to Inventory',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                //Process the adding of items on press of button
+                onPressed: () async {
+                  // Navigator.push returns a future value so you need to await for it
+                  var updatedData = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AddItem(data: _data, items: Items)),
                   );
+                  //returned items, after addition, requiring state change of processed data to reflect addition.
+                  setState(() {
+                    //If a new item was added, need to re-initialize the lists used for search functionality
+                    //and display of data.
+                    if (updatedData.length > 0) {
+                      mainDataList = [];
+                      newDataList = [];
+                      for (var i = 0; i < updatedData.length; i++) {
+                        mainDataList.add('${updatedData[i].name
+                            .toString()};${updatedData[i].id.toString()}');
+                        newDataList.add(updatedData[i].name.toString());
+                      }
+                    }
+                  });
                 },
-              ).toList(),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.all(25),
-            child: FlatButton(
-              child: Text(
-                'Add Item to Inventory',
-                style: TextStyle(fontSize: 20.0),
               ),
-              //Process the adding of items on press of button
-              onPressed: () async {
-                // Navigator.push returns a future value so you need to await for it
-                var data2 = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddItem(data: _data, items: Items)),
-                );
-              //returned items, after addition, requiring state change of processed data to reflect addition.
-                setState(() {
-                  mainDataList = [];
-                  newDataList = [];
-                  for (var i = 0; i < data2.length; i++) {
-                    mainDataList.add(data2[i].name.toString());
-                    newDataList.add(data2[i].name.toString());
-
-                  }
-
-                });
-              },
-            ),
-          )
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      );
+    }
   }
-}
-
+  }
 // Search bar in app bar flutter
 class SearchAppBar extends StatefulWidget {
   @override
@@ -203,8 +217,7 @@ class detailedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
             appBar: AppBar(title: Text('Inventory Tracking System')),
             body: new Center(
                 child: Column(children: <Widget>[
@@ -239,7 +252,7 @@ class detailedView extends StatelessWidget {
                       },
                     ),
                   )
-                ]))));
+                ])));
   }
 }
 
@@ -319,8 +332,7 @@ class AddItemState extends State<AddItem> {
                       int.parse(_itemQuantity.text),
                       double.parse(_itemPrice.text),
                       int.parse(_supplierID.text));
-                      widget.items.add(item);
-
+                  widget.items.add(item);
                   //return to the list search page with the newly added item (widget.items list)
                   Navigator.pop(
                       context,
@@ -330,11 +342,12 @@ class AddItemState extends State<AddItem> {
                 textColor: Colors.white,
                 padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: const Text('Add Item to Inventory')),
-                ElevatedButton(
-                onPressed: () {
+            ElevatedButton(
+              onPressed: () {
 
-                Navigator.pop(context);
-                },
+                Navigator.pop(
+                    context,
+                    widget.items);              },
               child: const Text('Return to Main Menu'),
             )
           ],
