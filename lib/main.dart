@@ -339,17 +339,6 @@ class AddItemState extends State<AddItem> {
                   } else {
                     return;
                   }
-                  /*var item = new Item(
-                      int.parse(_itemID.text),
-                      _itemName.text,
-                      int.parse(_itemQuantity.text),
-                      double.parse(_itemPrice.text),
-                      int.parse(_supplierID.text));
-                  widget.items.add(item);*/
-                  /*bool addItem = widget.items.add(item);
-                  print("Was the item added to list?: " + addItem.toString());*/
-                  //Return to the list search page with the newly added item (widget.items list)
-                  // Navigator.pop(context, widget.items);
                 },
                 color: Color(0xffFF1744),
                 textColor: Colors.white,
