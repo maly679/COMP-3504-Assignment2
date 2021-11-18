@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './Item.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:developer';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,7 +22,6 @@ class ListSearch extends StatefulWidget {
 }
 
 class ListSearchState extends State<ListSearch> {
-
   //base variables and arrays needed to process data from file and the search functionality
   String _data = '';
   List<String> result = [];
@@ -43,7 +43,6 @@ class ListSearchState extends State<ListSearch> {
   //Load data from file, if this is first run of program.
   Future<void> _loadData() async {
     if (mainDataList.length == 0) {
-
       final _loadedData = await rootBundle.loadString('assets/items.txt');
       _data = _loadedData;
       result = _data.split("\r\n");
@@ -57,10 +56,12 @@ class ListSearchState extends State<ListSearch> {
             int.parse(splitResult[4]));
         Items.add(item);
         mainDataList.add('${item.name.toString()};${item.id.toString()}');
-
       }
       //once data is loaded, set loading to false and initialize data, so inventory data can be shown on widget.
-      setState((){ loading = false; onItemChanged('');});
+      setState(() {
+        loading = false;
+        onItemChanged('');
+      });
     }
   }
 
@@ -73,16 +74,15 @@ class ListSearchState extends State<ListSearch> {
   onItemChanged(String value) {
     setState(() {
       newDataList = mainDataList
-          .where((string) =>
-          string.toLowerCase().contains(value.toLowerCase()))
+          .where((string) => string.toLowerCase().contains(value.toLowerCase()))
           .toList();
 
       //used to account for search by id and name. Data is displayed on screen
       //by just name.
       int i = 0;
       newDataList.forEach((element) {
-          newDataList[i] = element.split(';')[0];
-          i++;
+        newDataList[i] = element.split(';')[0];
+        i++;
       });
     });
   }
@@ -95,7 +95,6 @@ class ListSearchState extends State<ListSearch> {
     if (loading == true) {
       return CircularProgressIndicator();
     } else {
-
       return Scaffold(
         body: Column(
           children: <Widget>[
@@ -112,17 +111,16 @@ class ListSearchState extends State<ListSearch> {
             Expanded(
               child: ListView(
                 padding: EdgeInsets.all(12.0),
-                children:
-                newDataList.map(
-                      (data) {
+                children: newDataList.map(
+                  (data) {
                     return ListTile(
                       title: Text(data),
                       //process detail view on click of item name.
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                              return new detailedView(data: data, items: Items);
-                            }));
+                          return new detailedView(data: data, items: Items);
+                        }));
                       },
                     );
                   },
@@ -153,8 +151,8 @@ class ListSearchState extends State<ListSearch> {
                       mainDataList = [];
                       newDataList = [];
                       for (var i = 0; i < updatedData.length; i++) {
-                        mainDataList.add('${updatedData[i].name
-                            .toString()};${updatedData[i].id.toString()}');
+                        mainDataList.add(
+                            '${updatedData[i].name.toString()};${updatedData[i].id.toString()}');
                         newDataList.add(updatedData[i].name.toString());
                       }
                     }
@@ -167,7 +165,8 @@ class ListSearchState extends State<ListSearch> {
       );
     }
   }
-  }
+}
+
 // Search bar in app bar flutter
 class SearchAppBar extends StatefulWidget {
   @override
@@ -181,7 +180,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar:
-      new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
+          new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
         new IconButton(
           icon: actionIcon,
           onPressed: () {
@@ -218,41 +217,40 @@ class detailedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            appBar: AppBar(title: Text('Inventory Tracking System')),
-            body: new Center(
-                child: Column(children: <Widget>[
-                  Container(
-                      alignment: Alignment.center,
-                      child: Text("${data} Details",
-                          style: TextStyle(fontSize: 25, color: Colors.white)),
-                      margin: const EdgeInsets.only(top: 60.0),
-                      height: 80,
-                      width: 300,
-                      color: Colors.blue),
-                  Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        //fix toString() return of parenthesis surrounding values
-                          items
-                              .where((i) => i.name == data)
-                              .toString()
-                              .replaceAll('(', '')
-                              .replaceAll(')', ''),
-                          style:
-                          TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
-                      height: 200,
-                      width: 350),
-                  Container(
-                    alignment: Alignment.center,
-                    child: FlatButton(
-                      child: Text('Back'),
-                      color: Colors.blue,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  )
-                ])));
+        appBar: AppBar(title: Text('Inventory Tracking System')),
+        body: new Center(
+            child: Column(children: <Widget>[
+          Container(
+              alignment: Alignment.center,
+              child: Text("${data} Details",
+                  style: TextStyle(fontSize: 25, color: Colors.white)),
+              margin: const EdgeInsets.only(top: 60.0),
+              height: 80,
+              width: 300,
+              color: Colors.blue),
+          Container(
+              alignment: Alignment.center,
+              child: Text(
+                  //fix toString() return of parenthesis surrounding values
+                  items
+                      .where((i) => i.name == data)
+                      .toString()
+                      .replaceAll('(', '')
+                      .replaceAll(')', ''),
+                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+              height: 200,
+              width: 350),
+          Container(
+            alignment: Alignment.center,
+            child: FlatButton(
+              child: Text('Back'),
+              color: Colors.blue,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          )
+        ])));
   }
 }
 
@@ -267,7 +265,6 @@ class AddItem extends StatefulWidget {
 }
 
 class AddItemState extends State<AddItem> {
-
   @override
   Widget build(BuildContext context) {
     final _itemID = TextEditingController();
@@ -324,29 +321,35 @@ class AddItemState extends State<AddItem> {
                   decoration: InputDecoration(hintText: 'Enter Supplier ID'),
                 )),
             RaisedButton(
+                // Add item to list and returns to list search page
                 onPressed: () {
                   // Create new item object and add it to list
-                  var item = new Item(
-                      int.parse(_itemID.text),
-                      _itemName.text,
-                      int.parse(_itemQuantity.text),
-                      double.parse(_itemPrice.text),
-                      int.parse(_supplierID.text));
-                  widget.items.add(item);
-                  //Return to the list search page with the newly added item (widget.items list)
-                  Navigator.pop(
-                      context,
-                      widget.items);
+                  bool inputCheck = inputItemCheck(_itemID, _itemName,
+                      _itemQuantity, _itemPrice, _supplierID);
+
+                  if (inputCheck == true) {
+                    Item newItem = new Item(
+                        int.parse(_itemID.text),
+                        _itemName.text,
+                        int.parse(_itemQuantity.text),
+                        double.parse(_itemPrice.text),
+                        int.parse(_supplierID.text));
+                    widget.items.add(newItem);
+                    Navigator.pop(context, widget.items);
+                  } else {
+                    return;
+                  }
                 },
                 color: Color(0xffFF1744),
                 textColor: Colors.white,
                 padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: const Text('Add Item to Inventory')),
             ElevatedButton(
+              // Return to the list search page without adding an item
               onPressed: () {
-                Navigator.pop(
-                    context,
-                    widget.items);              
+                showToast(
+                    "Returning to Main Menu. No item not added to inventory.");
+                Navigator.pop(context, widget.items);
               },
               child: const Text('Return to Main Menu'),
             )
@@ -355,4 +358,99 @@ class AddItemState extends State<AddItem> {
       ),
     );
   }
+
+  /**
+   * Validates if the input is valid.
+   */
+  bool inputItemCheck(
+      _itemID, _itemName, _itemQuantity, _itemPrice, _supplierID) {
+    // Checks if all fields are empty
+    if (_itemID.text == "" ||
+        _itemName.text == "" ||
+        _itemQuantity.text == "" ||
+        _itemPrice.text == "" ||
+        _supplierID.text == "") {
+      if (_itemID.text == "") {
+        print("itemID field is empty...");
+        showToast("itemID field is empty...");
+      } else if (_itemName.text == "") {
+        print("itemName field is empty...");
+        showToast("itemName field is empty...");
+      } else if (_itemQuantity.text == "") {
+        print("itemQuantity field is empty...");
+        showToast("itemQuantity field is empty...");
+      } else if (_itemPrice.text == "") {
+        print("itemPrice field is empty...");
+        showToast("itemPrice field is empty...");
+      } else if (_supplierID.text == "") {
+        print("supplierID field is empty...");
+        showToast("supplierID field is empty...");
+      }
+      // All fields are empty
+      else {
+        print(
+            "itemID, itemName, itemQuantity, and itemPrice, and supplierID field are empty...");
+        showToast(
+            "ItemID, itemName, itemQuantity, and itemPrice, and supplierID fields are empty...");
+      }
+
+      return false;
+    }
+    // Checks if numeric field contains non-numeric values
+    else if (_isNumeric(_itemID.text) == false ||
+        _isNumeric(_itemQuantity.text) == false ||
+        _isNumeric(_itemPrice.text) == false ||
+        _isNumeric(_supplierID.text) == false) {
+      if (_isNumeric(_itemID.text) == false) {
+        print("itemID is an invalid value...");
+        showToast("itemID is an invalid value...");
+      } else if (_isNumeric(_itemQuantity.text) == false) {
+        print("itemQuantity is an invalid value...");
+        showToast("itemQuantity is an invalid value...");
+      } else if (_isNumeric(_itemPrice.text) == false) {
+        print("itemPrice is an invalid value...");
+        showToast("itemPrice is an invalid value...");
+      } else if (_isNumeric(_supplierID.text) == false) {
+        print("supplierID is an invalid value...");
+        showToast("supplierID is an invalid value...");
+      }
+      // All fields contain non-numeric values
+      else {
+        print(
+            "itemID, itemQuantity, itemPrice, and supplierID are not numeric values...");
+        showToast(
+            "itemID, itemQuantity, itemPrice, and supplierID are not numeric values...");
+      }
+
+      return false;
+    }
+    // Confirms item is added into inventory list
+    else {
+      print("Item added to inventory...");
+      showToast("Item added to inventory");
+
+      return true;
+    }
+  }
+
+  /**
+   * Checks if the input is numeric
+   */
+  bool _isNumeric(String s) {
+    // If string is a number, return false
+    if (s == null) {
+      return false;
+    }
+    // DEFAULT; If string is not a number, return true
+    return double.tryParse(s) != null;
+  }
+
+  /**
+   * Generates a toast message
+   */
+  void showToast(String message) => Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
 }
