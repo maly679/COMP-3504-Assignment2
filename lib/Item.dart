@@ -16,7 +16,7 @@ class Item {
   }
 
   String toString() {
-    return '    ID: ${this.id} \n    Name: ${this.name} \n    Quantity: ${this.quantity} \n    Price: ${this.price} \n    Supplier ID: ${this.supplierID}';
+    return '${this.id} ${this.name} ${this.quantity} ${this.price} ${this.supplierID}';
   }
 
 

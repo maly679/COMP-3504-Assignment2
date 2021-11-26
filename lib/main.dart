@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import './Item.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:developer';
-import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,154 +15,156 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//class for handling item display and searches
 class ListSearch extends StatefulWidget {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
   ListSearchState createState() => ListSearchState();
 }
 
 class ListSearchState extends State<ListSearch> {
-  //base variables and arrays needed to process data from file and the search functionality
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
   String _data = '';
   List<String> result = [];
   List<Item> Items = [];
   static List<String> mainDataList = [];
-  Widget _body = CircularProgressIndicator();
-
-  //tests whether data is still fetching. Initially set to true;
-  bool loading = true;
 
   @override
   void initState() {
+<<<<<<< HEAD
     _loadData().then((value) {
+=======
+<<<<<<< HEAD
+    _loadData().then((value) {
+=======
+
+    _loadData().then((value){
+>>>>>>> cc96d07 (added a details class and view for each item name, and a button to return to previous page)
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
       print('Async done');
     });
     super.initState();
   }
 
-  //Load data from file, if this is first run of program.
   Future<void> _loadData() async {
-    if (mainDataList.length == 0) {
-      final _loadedData = await rootBundle.loadString('assets/items.txt');
-      _data = _loadedData;
-      result = _data.split("\r\n");
-      for (var i = 0; i < result.length; i++) {
-        var splitResult = result[i].split(';');
-        var item = new Item(
-            int.parse(splitResult[0]),
-            splitResult[1],
-            int.parse(splitResult[2]),
-            double.parse(splitResult[3]),
-            int.parse(splitResult[4]));
-        Items.add(item);
-        mainDataList.add('${item.name.toString()};${item.id.toString()}');
-      }
-      //once data is loaded, set loading to false and initialize data, so inventory data can be shown on widget.
-      setState(() {
-        loading = false;
-        onItemChanged('');
-      });
+    final _loadedData = await rootBundle.loadString('assets/items.txt');
+    _data = _loadedData;
+    result = _data.split("\r\n");
+    for (var i = 0; i < result.length; i++) {
+      var splitResult = result[i].split(';');
+      var item = new Item(
+          int.parse(splitResult[0]),
+          splitResult[1],
+          int.parse(splitResult[2]),
+          double.parse(splitResult[3]),
+          int.parse(splitResult[4]));
+      Items.add(item);
+      mainDataList.add(item.name.toString());
     }
   }
 
   TextEditingController _textController = TextEditingController();
-  // Copy Main List into New List. This is used to process the search functionality.
+
+  // Copy Main List into New List.
   List<String> newDataList = List.from(mainDataList);
 
-  //Item changed in search. Tests id and name through the mainDataList items that have data stored
-  //as 'name;ID', and if match is found returns newDataList in the name-only format required in list view.
   onItemChanged(String value) {
     setState(() {
       newDataList = mainDataList
           .where((string) => string.toLowerCase().contains(value.toLowerCase()))
           .toList();
-
-      //used to account for search by id and name. Data is displayed on screen
-      //by just name.
-      int i = 0;
-      newDataList.forEach((element) {
-        newDataList[i] = element.split(';')[0];
-        i++;
-      });
     });
+  }
+
+  showDetails(String Name) {
+    for (int i = 0; i < Items.length; i++) {
+      if (Items[i].name == Name) {
+        print(Items[i]);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //Checks if async data is still loading; if so show circular loading screen
-    //loading is set to false in state above.
-
-    if (loading == true) {
-      return CircularProgressIndicator();
-    } else {
-      return Scaffold(
-        body: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TextField(
-                controller: _textController,
-                decoration: InputDecoration(
-                  hintText: 'Search Here...',
-                ),
-                onChanged: onItemChanged,
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: 'Search Here...',
               ),
+              onChanged: onItemChanged,
             ),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(12.0),
-                children: newDataList.map(
-                  (data) {
-                    return ListTile(
-                      title: Text(data),
-                      //process detail view on click of item name.
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return new detailedView(data: data, items: Items);
-                        }));
-                      },
-                    );
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.all(12.0),
+<<<<<<< HEAD
+              children: newDataList.map((data) {
+                return ListTile(
+                  title: Text(data),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return new detailedView(data: data, items: Items);
+                    }));
                   },
-                ).toList(),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(25),
-              child: FlatButton(
-                child: Text(
-                  'Add Item to Inventory',
-                  style: TextStyle(fontSize: 20.0),
-                ),
-                //Process the adding of items on press of button.
-                onPressed: () async {
-                  //Navigator.push returns a future value so you need to await for it.
-                  var updatedData = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            AddItem(data: _data, items: Items)),
+                );
+              }).toList(),
+=======
+<<<<<<< HEAD
+              children: newDataList.map(
+                (data) {
+                  return ListTile(
+                    title: Text(data),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return new detailedView(data: data, items: Items);
+                      }));
+                    },
                   );
-                  //Returned items, after addition, requiring state change of processed data to reflect addition.
-                  setState(() {
-                    //If a new item was added, need to re-initialize the lists used for search functionality.
-                    //and display of data.
-                    if (updatedData.length > 0) {
-                      mainDataList = [];
-                      newDataList = [];
-                      for (var i = 0; i < updatedData.length; i++) {
-                        mainDataList.add(
-                            '${updatedData[i].name.toString()};${updatedData[i].id.toString()}');
-                        newDataList.add(updatedData[i].name.toString());
-                      }
-                    }
-                  });
                 },
+              ).toList(),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.all(25),
+            child: FlatButton(
+              child: Text(
+                'Add Item to Inventory',
+                style: TextStyle(fontSize: 20.0),
               ),
-            )
-          ],
-        ),
-      );
-    }
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return new AddItemPage(data: _data, items: Items);
+                  }),
+                );
+              },
+=======
+              children: newDataList.map((data) {
+                return ListTile(
+                  title: Text(data),
+                  onTap: () { Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return new detailedView(data: data, items: Items);
+                  }));},);
+              }).toList(),
+>>>>>>> cc96d07 (added a details class and view for each item name, and a button to return to previous page)
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -208,7 +209,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 }
 
-//Upon clicking an item - shows detailed view.
 class detailedView extends StatelessWidget {
   final data;
   final items;
@@ -216,55 +216,67 @@ class detailedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text('Inventory Tracking System')),
-        body: new Center(
-            child: Column(children: <Widget>[
-          Container(
-              alignment: Alignment.center,
-              child: Text("${data} Details",
-                  style: TextStyle(fontSize: 25, color: Colors.white)),
-              margin: const EdgeInsets.only(top: 60.0),
-              height: 80,
-              width: 300,
-              color: Colors.blue),
-          Container(
-              alignment: Alignment.center,
-              child: Text(
-                  //fix toString() return of parenthesis surrounding values
-                  items
-                      .where((i) => i.name == data)
-                      .toString()
-                      .replaceAll('(', '')
-                      .replaceAll(')', ''),
-                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
-              height: 200,
-              width: 350),
-          Container(
-            alignment: Alignment.center,
-            child: FlatButton(
-              child: Text('Back'),
-              color: Colors.blue,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          )
-        ])));
+    return MaterialApp(
+        home: Scaffold(
+            appBar: AppBar(title: Text('Inventory Tracking System')),
+            body: new Center(
+                child: Column(children: <Widget>[
+              Container(
+                  alignment: Alignment.center,
+                  child: Text("${data} Details",
+                      style: TextStyle(fontSize: 25, color: Colors.white)),
+                  margin: const EdgeInsets.only(top: 60.0),
+                  height: 80,
+                  width: 300,
+                  color: Colors.blue),
+              Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                      items
+                          .where((i) => i.name == data)
+                          .toString()
+                          .replaceAll('(', '')
+                          .replaceAll(')', ''),
+                      style:
+                          TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+                  height: 200,
+                  width: 350),
+              Container(
+                alignment: Alignment.center,
+                child: FlatButton(
+                  child: Text('Back'),
+                  color: Colors.blue,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ]))));
   }
 }
 
-//Add an item to the list
-class AddItem extends StatefulWidget {
+class AddItemPage extends StatelessWidget {
   final data;
   final items;
-  AddItem({Key? key, this.data, this.items}) : super(key: key);
+  const AddItemPage({Key? key, this.data, this.items}) : super(key: key);
 
-  @override
-  AddItemState createState() => AddItemState();
-}
+  // Future<void> _loadData() async {
+  //   final _loadedData = await rootBundle.loadString('assets/items.txt');
+  //   _data = _loadedData;
+  //   result = _data.split("\r\n");
+  //   for (var i = 0; i < result.length; i++) {
+  //     var splitResult = result[i].split(';');
+  //     var item = new Item(
+  //         int.parse(splitResult[0]),
+  //         splitResult[1],
+  //         int.parse(splitResult[2]),
+  //         double.parse(splitResult[3]),
+  //         int.parse(splitResult[4]));
+  //     Items.add(item);
+  //     mainDataList.add(item.name.toString());
+  //   }
+  // }
 
-class AddItemState extends State<AddItem> {
   @override
   Widget build(BuildContext context) {
     final _itemID = TextEditingController();
@@ -321,35 +333,42 @@ class AddItemState extends State<AddItem> {
                   decoration: InputDecoration(hintText: 'Enter Supplier ID'),
                 )),
             RaisedButton(
-                // Add item to list and returns to list search page
                 onPressed: () {
-                  // Create new item object and add it to list
-                  bool inputCheck = inputItemCheck(_itemID, _itemName,
-                      _itemQuantity, _itemPrice, _supplierID);
+                  print(_itemID.text +
+                      " " +
+                      _itemName.text +
+                      " " +
+                      _itemQuantity.text +
+                      " " +
+                      _itemPrice.text +
+                      " " +
+                      _supplierID.text);
 
-                  if (inputCheck == true) {
-                    Item newItem = new Item(
-                        int.parse(_itemID.text),
-                        _itemName.text,
-                        int.parse(_itemQuantity.text),
-                        double.parse(_itemPrice.text),
-                        int.parse(_supplierID.text));
-                    widget.items.add(newItem);
-                    Navigator.pop(context, widget.items);
-                  } else {
-                    return;
-                  }
+                  // todo: add item to array
+                  var item = new Item(
+                      int.parse(_itemID.text),
+                      _itemName.text,
+                      int.parse(_itemQuantity.text),
+                      double.parse(_itemPrice.text),
+                      int.parse(_supplierID.text));
+                  // Items.add(item);
+
+                  // todo: export item to text file
+
+                  // Return to main menu
+                  Navigator.pop(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ListSearch(),
+                      ));
                 },
                 color: Color(0xffFF1744),
                 textColor: Colors.white,
                 padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: const Text('Add Item to Inventory')),
             ElevatedButton(
-              // Return to the list search page without adding an item
               onPressed: () {
-                showToast(
-                    "Returning to Main Menu. No item not added to inventory.");
-                Navigator.pop(context, widget.items);
+                Navigator.pop(context);
               },
               child: const Text('Return to Main Menu'),
             )
@@ -358,99 +377,111 @@ class AddItemState extends State<AddItem> {
       ),
     );
   }
-
-  /**
-   * Validates if the input is valid.
-   */
-  bool inputItemCheck(
-      _itemID, _itemName, _itemQuantity, _itemPrice, _supplierID) {
-    // Checks if all fields are empty
-    if (_itemID.text == "" ||
-        _itemName.text == "" ||
-        _itemQuantity.text == "" ||
-        _itemPrice.text == "" ||
-        _supplierID.text == "") {
-      if (_itemID.text == "") {
-        print("itemID field is empty...");
-        showToast("itemID field is empty...");
-      } else if (_itemName.text == "") {
-        print("itemName field is empty...");
-        showToast("itemName field is empty...");
-      } else if (_itemQuantity.text == "") {
-        print("itemQuantity field is empty...");
-        showToast("itemQuantity field is empty...");
-      } else if (_itemPrice.text == "") {
-        print("itemPrice field is empty...");
-        showToast("itemPrice field is empty...");
-      } else if (_supplierID.text == "") {
-        print("supplierID field is empty...");
-        showToast("supplierID field is empty...");
-      }
-      // All fields are empty
-      else {
-        print(
-            "itemID, itemName, itemQuantity, and itemPrice, and supplierID field are empty...");
-        showToast(
-            "ItemID, itemName, itemQuantity, and itemPrice, and supplierID fields are empty...");
-      }
-
-      return false;
-    }
-    // Checks if numeric field contains non-numeric values
-    else if (_isNumeric(_itemID.text) == false ||
-        _isNumeric(_itemQuantity.text) == false ||
-        _isNumeric(_itemPrice.text) == false ||
-        _isNumeric(_supplierID.text) == false) {
-      if (_isNumeric(_itemID.text) == false) {
-        print("itemID is an invalid value...");
-        showToast("itemID is an invalid value...");
-      } else if (_isNumeric(_itemQuantity.text) == false) {
-        print("itemQuantity is an invalid value...");
-        showToast("itemQuantity is an invalid value...");
-      } else if (_isNumeric(_itemPrice.text) == false) {
-        print("itemPrice is an invalid value...");
-        showToast("itemPrice is an invalid value...");
-      } else if (_isNumeric(_supplierID.text) == false) {
-        print("supplierID is an invalid value...");
-        showToast("supplierID is an invalid value...");
-      }
-      // All fields contain non-numeric values
-      else {
-        print(
-            "itemID, itemQuantity, itemPrice, and supplierID are not numeric values...");
-        showToast(
-            "itemID, itemQuantity, itemPrice, and supplierID are not numeric values...");
-      }
-
-      return false;
-    }
-    // Confirms item is added into inventory list
-    else {
-      print("Item added to inventory...");
-      showToast("Item added to inventory");
-
-      return true;
-    }
-  }
-
-  /**
-   * Checks if the input is numeric
-   */
-  bool _isNumeric(String s) {
-    // If string is a number, return false
-    if (s == null) {
-      return false;
-    }
-    // DEFAULT; If string is not a number, return true
-    return double.tryParse(s) != null;
-  }
-
-  /**
-   * Generates a toast message
-   */
-  void showToast(String message) => Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-      );
 }
+<<<<<<< HEAD
+
+class detailedView extends StatelessWidget {
+  final data;
+  final items;
+  detailedView({Key? key, this.data, this.items}) : super(key: key);
+=======
+<<<<<<< HEAD
+=======
+
+class detailedView extends StatelessWidget {
+final data;
+final items;
+detailedView({Key? key,this.data,this.items}) : super(key: key);
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+<<<<<<< HEAD
+            appBar: AppBar(title: Text('Inventory Tracking System')),
+            body: new Center(
+                child: Column(children: <Widget>[
+              Container(
+                  alignment: Alignment.center,
+                  child: Text("${data} Details",
+                      style: TextStyle(fontSize: 25, color: Colors.white)),
+                  margin: const EdgeInsets.only(top: 60.0),
+                  height: 80,
+                  width: 300,
+                  color: Colors.blue),
+              Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                      items
+                          .where((i) => i.name == data)
+                          .toString()
+                          .replaceAll('(', '')
+                          .replaceAll(')', ''),
+                      style:
+                          TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+                  height: 200,
+                  width: 350),
+              Container(
+                alignment: Alignment.center,
+                child: FlatButton(
+                  child: Text('Back'),
+                  color: Colors.blue,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ]))));
+  }
+}
+=======
+        appBar: AppBar(
+        title: Text('Inventory Tracking System')
+    ),
+
+        body: new Center(
+
+
+        child: Column (
+        children: <Widget>[
+
+          Container(
+
+              alignment: Alignment.center,
+
+              child:
+
+              Text("${data} Details",  style: TextStyle(fontSize: 25, color: Colors.white)),
+              margin: const EdgeInsets.only(top: 60.0),
+              height: 80,
+              width: 300,
+              color: Colors.blue
+
+          )          ,
+        Container(
+          alignment: Alignment.center,
+
+        child:
+        Text(items.where(( i ) => i.name == data).toString().replaceAll('(','').replaceAll(')',''),  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+          height: 200,
+            width: 350
+    )          ,
+          Container(
+              alignment: Alignment.center,
+            child: FlatButton(
+              child: Text('Back'),
+                color: Colors.blue,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          )
+     ]
+    )
+    )));
+  }
+}
+
+>>>>>>> cc96d07 (added a details class and view for each item name, and a button to return to previous page)
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
