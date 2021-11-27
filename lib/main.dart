@@ -23,7 +23,7 @@ class ListSearch extends StatefulWidget {
 }
 
 class ListSearchState extends State<ListSearch> {
-  //base variables and arrays needed to process data from file and the search functionality
+  //base variables and arrays needed to process data from API, and the application search functionality
   String _data = '';
   List<String> result = [];
   List<Item> Items = [];
@@ -41,7 +41,7 @@ class ListSearchState extends State<ListSearch> {
     super.initState();
   }
 
-  //Load data from file, if this is first run of program.
+  //Load data from API, if this is first run of program.
   Future<void> _loadData() async {
     if (mainDataList.length == 0) {
       final response = await http
