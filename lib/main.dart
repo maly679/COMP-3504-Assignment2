@@ -3,9 +3,10 @@ import './Item.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:developer';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() => runApp(MyApp());
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -22,13 +23,13 @@ class ListSearch extends StatefulWidget {
 }
 
 class ListSearchState extends State<ListSearch> {
-  //base variables and arrays needed to process data from file and the search functionality
+  //base variables and arrays needed to process data from API, and the application search functionality
   String _data = '';
   List<String> result = [];
   List<Item> Items = [];
   static List<String> mainDataList = [];
   Widget _body = CircularProgressIndicator();
-
+  late Future<Item> futureItem;
   //tests whether data is still fetching. Initially set to true;
   bool loading = true;
 
@@ -40,20 +41,23 @@ class ListSearchState extends State<ListSearch> {
     super.initState();
   }
 
-  //Load data from file, if this is first run of program.
+  //Load data from API, if this is first run of program.
   Future<void> _loadData() async {
     if (mainDataList.length == 0) {
-      final _loadedData = await rootBundle.loadString('assets/items.txt');
-      _data = _loadedData;
-      result = _data.split("\r\n");
-      for (var i = 0; i < result.length; i++) {
-        var splitResult = result[i].split(';');
+      final response = await http
+          .get(Uri.parse('http://34.66.241.147:8080/'));
+
+      if (response.statusCode == 200) {
+
+      for (var i = 0; i < jsonDecode(response.body).length; i++) {
+
+        //convert from JSON format to Item object format properties.
         var item = new Item(
-            int.parse(splitResult[0]),
-            splitResult[1],
-            int.parse(splitResult[2]),
-            double.parse(splitResult[3]),
-            int.parse(splitResult[4]));
+            jsonDecode(response.body)[i]['itemID'],
+            jsonDecode(response.body)[i]['itemName'],
+            jsonDecode(response.body)[i]['itemQuantity'],
+            jsonDecode(response.body)[i]['itemPrice'].toDouble(),
+            jsonDecode(response.body)[i]['supplierID']);
         Items.add(item);
         mainDataList.add('${item.name.toString()};${item.id.toString()}');
       }
@@ -62,6 +66,11 @@ class ListSearchState extends State<ListSearch> {
         loading = false;
         onItemChanged('');
       });
+    }
+
+    } else {
+      // Server did not return 200 status - API GET request not successful.
+      throw Exception('Failed to load items');
     }
   }
 
@@ -112,15 +121,15 @@ class ListSearchState extends State<ListSearch> {
               child: ListView(
                 padding: EdgeInsets.all(12.0),
                 children: newDataList.map(
-                  (data) {
+                      (data) {
                     return ListTile(
                       title: Text(data),
                       //process detail view on click of item name.
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return new detailedView(data: data, items: Items);
-                        }));
+                              return new detailedView(data: data, items: Items);
+                            }));
                       },
                     );
                   },
@@ -180,7 +189,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar:
-          new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
+      new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
         new IconButton(
           icon: actionIcon,
           onPressed: () {
@@ -220,37 +229,37 @@ class detailedView extends StatelessWidget {
         appBar: AppBar(title: Text('Inventory Tracking System')),
         body: new Center(
             child: Column(children: <Widget>[
-          Container(
-              alignment: Alignment.center,
-              child: Text("${data} Details",
-                  style: TextStyle(fontSize: 25, color: Colors.white)),
-              margin: const EdgeInsets.only(top: 60.0),
-              height: 80,
-              width: 300,
-              color: Colors.blue),
-          Container(
-              alignment: Alignment.center,
-              child: Text(
-                  //fix toString() return of parenthesis surrounding values
-                  items
-                      .where((i) => i.name == data)
-                      .toString()
-                      .replaceAll('(', '')
-                      .replaceAll(')', ''),
-                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
-              height: 200,
-              width: 350),
-          Container(
-            alignment: Alignment.center,
-            child: FlatButton(
-              child: Text('Back'),
-              color: Colors.blue,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          )
-        ])));
+              Container(
+                  alignment: Alignment.center,
+                  child: Text("${data} Details",
+                      style: TextStyle(fontSize: 25, color: Colors.white)),
+                  margin: const EdgeInsets.only(top: 60.0),
+                  height: 80,
+                  width: 300,
+                  color: Colors.blue),
+              Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    //fix toString() return of parenthesis surrounding values
+                      items
+                          .where((i) => i.name == data)
+                          .toString()
+                          .replaceAll('(', '')
+                          .replaceAll(')', ''),
+                      style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+                  height: 200,
+                  width: 350),
+              Container(
+                alignment: Alignment.center,
+                child: FlatButton(
+                  child: Text('Back'),
+                  color: Colors.blue,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ])));
   }
 }
 
@@ -321,13 +330,31 @@ class AddItemState extends State<AddItem> {
                   decoration: InputDecoration(hintText: 'Enter Supplier ID'),
                 )),
             RaisedButton(
-                // Add item to list and returns to list search page
+              // Add item to list and returns to list search page
                 onPressed: () {
                   // Create new item object and add it to list
                   bool inputCheck = inputItemCheck(_itemID, _itemName,
                       _itemQuantity, _itemPrice, _supplierID);
 
                   if (inputCheck == true) {
+
+                    //POST item through API
+                    http.post(
+                      Uri.parse('http://34.66.241.147:8080/api/item'),
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                      },
+                      body: jsonEncode(<String, String>{
+                        'itemID': _itemID.text,
+                        'itemName': _itemName.text,
+                        'itemQuantity': _itemQuantity.text,
+                        'itemPrice': _itemPrice.text,
+                        'supplierID': _supplierID.text
+
+                      }),
+                    );
+
+                    //Add item to state items array.
                     Item newItem = new Item(
                         int.parse(_itemID.text),
                         _itemName.text,
@@ -449,8 +476,8 @@ class AddItemState extends State<AddItem> {
    * Generates a toast message
    */
   void showToast(String message) => Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-      );
+    msg: message,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+  );
 }

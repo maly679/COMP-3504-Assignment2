@@ -16,10 +16,18 @@ class MyApp extends StatelessWidget {
 }
 
 class ListSearch extends StatefulWidget {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
   ListSearchState createState() => ListSearchState();
 }
 
 class ListSearchState extends State<ListSearch> {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
   String _data = '';
   List<String> result = [];
   List<Item> Items = [];
@@ -27,7 +35,16 @@ class ListSearchState extends State<ListSearch> {
 
   @override
   void initState() {
+<<<<<<< HEAD
     _loadData().then((value) {
+=======
+<<<<<<< HEAD
+    _loadData().then((value) {
+=======
+
+    _loadData().then((value){
+>>>>>>> cc96d07 (added a details class and view for each item name, and a button to return to previous page)
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
       print('Async done');
     });
     super.initState();
@@ -89,6 +106,7 @@ class ListSearchState extends State<ListSearch> {
           Expanded(
             child: ListView(
               padding: EdgeInsets.all(12.0),
+<<<<<<< HEAD
               children: newDataList.map((data) {
                 return ListTile(
                   title: Text(data),
@@ -100,6 +118,48 @@ class ListSearchState extends State<ListSearch> {
                   },
                 );
               }).toList(),
+=======
+<<<<<<< HEAD
+              children: newDataList.map(
+                (data) {
+                  return ListTile(
+                    title: Text(data),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return new detailedView(data: data, items: Items);
+                      }));
+                    },
+                  );
+                },
+              ).toList(),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.all(25),
+            child: FlatButton(
+              child: Text(
+                'Add Item to Inventory',
+                style: TextStyle(fontSize: 20.0),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return new AddItemPage(data: _data, items: Items);
+                  }),
+                );
+              },
+=======
+              children: newDataList.map((data) {
+                return ListTile(
+                  title: Text(data),
+                  onTap: () { Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return new detailedView(data: data, items: Items);
+                  }));},);
+              }).toList(),
+>>>>>>> cc96d07 (added a details class and view for each item name, and a button to return to previous page)
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
             ),
           )
         ],
@@ -318,16 +378,27 @@ class AddItemPage extends StatelessWidget {
     );
   }
 }
+<<<<<<< HEAD
 
 class detailedView extends StatelessWidget {
   final data;
   final items;
   detailedView({Key? key, this.data, this.items}) : super(key: key);
+=======
+<<<<<<< HEAD
+=======
+
+class detailedView extends StatelessWidget {
+final data;
+final items;
+detailedView({Key? key,this.data,this.items}) : super(key: key);
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+<<<<<<< HEAD
             appBar: AppBar(title: Text('Inventory Tracking System')),
             body: new Center(
                 child: Column(children: <Widget>[
@@ -364,3 +435,53 @@ class detailedView extends StatelessWidget {
             ]))));
   }
 }
+=======
+        appBar: AppBar(
+        title: Text('Inventory Tracking System')
+    ),
+
+        body: new Center(
+
+
+        child: Column (
+        children: <Widget>[
+
+          Container(
+
+              alignment: Alignment.center,
+
+              child:
+
+              Text("${data} Details",  style: TextStyle(fontSize: 25, color: Colors.white)),
+              margin: const EdgeInsets.only(top: 60.0),
+              height: 80,
+              width: 300,
+              color: Colors.blue
+
+          )          ,
+        Container(
+          alignment: Alignment.center,
+
+        child:
+        Text(items.where(( i ) => i.name == data).toString().replaceAll('(','').replaceAll(')',''),  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+          height: 200,
+            width: 350
+    )          ,
+          Container(
+              alignment: Alignment.center,
+            child: FlatButton(
+              child: Text('Back'),
+                color: Colors.blue,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          )
+     ]
+    )
+    )));
+  }
+}
+
+>>>>>>> cc96d07 (added a details class and view for each item name, and a button to return to previous page)
+>>>>>>> 5db8a80 (Fixed bug of data not showing when navigating out of Add Item to Inventory with nothing added.)
