@@ -9,3 +9,10 @@ lib/
 
 # Unnecessary Dart Files #
 global.dart
+
+# Makefiles ao automate workflow
+# Example of Makefiles and its paths
+# build/app/intermediates/flutter/debug/flutter_build.d
+# .dart_tool/flutter_build/b80c534d272e0058dde25c637b7bf04f/kernel_snapshot.d
+# .dart_tool/flutter_build/b80c534d272e0058dde25c637b7bf04f/flutter_assets.d
+*.d
